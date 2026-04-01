@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+link to webpage
 
-TODO: Document your project here
+https://shobhit-jajoo.github.io/hospital-managment/
