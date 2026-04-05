@@ -66,6 +66,23 @@ export interface Bill {
   amount: number;
   status: 'paid' | 'unpaid';
   date: string;
+  gstRate?: number;
+  gstAmount?: number;
+  totalAmount?: number;
+  paymentMode?: 'online' | 'upi' | 'card';
+  paidAt?: string;
+}
+
+export interface MedicalReport {
+  id: string;
+  appointmentId: string;
+  patientId: string;
+  doctorId: string;
+  hospitalId: string;
+  earlyDisease: string;
+  treatmentDone: string;
+  remarks: string;
+  date: string;
 }
 
 export interface AppData {
@@ -75,6 +92,7 @@ export interface AppData {
   patients: Patient[];
   appointments: Appointment[];
   prescriptions: Prescription[];
+  medicalReports: MedicalReport[];
   bills: Bill[];
 }
 
@@ -128,6 +146,7 @@ patients: [
 ],
   appointments: [],
   prescriptions: [],
+  medicalReports: [],
   bills: [],
 };
 
@@ -137,7 +156,18 @@ export const getData = (): AppData => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
     return initialData;
   }
-  return JSON.parse(stored);
+  const parsed = JSON.parse(stored) as Partial<AppData>;
+  const safeData: AppData = {
+    hospitals: parsed.hospitals || [],
+    departments: parsed.departments || [],
+    doctors: parsed.doctors || [],
+    patients: parsed.patients || [],
+    appointments: parsed.appointments || [],
+    prescriptions: parsed.prescriptions || [],
+    medicalReports: parsed.medicalReports || [],
+    bills: parsed.bills || [],
+  };
+  return safeData;
 };
 
 export const setData = (data: AppData): void => {

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { getData, setData, addToCollection, updateInCollection, type AppData, type Department, type Doctor, type Prescription } from '@/services/localStorageService';
+import { getData, addToCollection, type AppData, type Department, type Doctor, type Prescription, type MedicalReport } from '@/services/localStorageService';
 import { generateId } from '@/utils/idGenerator';
 
 interface DataContextType {
@@ -8,6 +8,7 @@ interface DataContextType {
   addDepartment: (dept: Omit<Department, 'id'>) => void;
   addDoctor: (doc: Omit<Doctor, 'id' | 'role'>) => void;
   addPrescription: (rx: Omit<Prescription, 'id'>) => void;
+  addMedicalReport: (report: Omit<MedicalReport, 'id'>) => void;
 }
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -43,8 +44,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     refresh();
   };
 
+  const addMedicalReport = (report: Omit<MedicalReport, 'id'>) => {
+    const newReport: MedicalReport = { ...report, id: generateId() };
+    addToCollection('medicalReports', newReport);
+    refresh();
+  };
+
   return (
-    <DataContext.Provider value={{ data, refresh, addDepartment, addDoctor, addPrescription }}>
+    <DataContext.Provider value={{ data, refresh, addDepartment, addDoctor, addPrescription, addMedicalReport }}>
       {children}
     </DataContext.Provider>
   );

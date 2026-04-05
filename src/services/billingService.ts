@@ -14,8 +14,26 @@ export const generateBill = (appointmentId: string, patientId: string, amount: n
   return bill;
 };
 
-export const markBillAsPaid = (billId: string): void => {
-  updateInCollection('bills', billId, { status: 'paid' });
+export const markBillAsPaid = (
+  billId: string,
+  paymentMode: Bill['paymentMode'],
+  gstRate: number,
+): void => {
+  const data = getData();
+  const bill = data.bills.find(b => b.id === billId);
+  if (!bill) return;
+
+  const gstAmount = Number((bill.amount * gstRate).toFixed(2));
+  const totalAmount = Number((bill.amount + gstAmount).toFixed(2));
+
+  updateInCollection('bills', billId, {
+    status: 'paid',
+    paymentMode,
+    gstRate,
+    gstAmount,
+    totalAmount,
+    paidAt: new Date().toISOString(),
+  });
 };
 
 export const getPatientBills = (patientId: string): Bill[] => {
